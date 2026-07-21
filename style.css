@@ -1,0 +1,71 @@
+:root{font:12px Tahoma,Verdana,sans-serif;color:#102454}
+*{box-sizing:border-box}
+body{margin:0;overflow:hidden;background:#0750ac}
+.app-shell{height:100vh;min-height:510px;display:grid;grid-template-rows:29px 1fr 1fr;background:#c4d7fb;border:1px solid #052468}
+.app-titlebar{display:flex;align-items:center;padding:0 8px;color:#fff;font-weight:bold;letter-spacing:.5px;text-shadow:1px 1px #00266e;background:linear-gradient(#5798ee,#2169cb 45%,#0a3d9a 51%,#164fac)}
+.window-actions{margin-left:auto;display:flex;gap:2px}
+.window-actions button,.playlist header button,.settings-dialog header button{width:20px;height:19px;padding:0;color:#fff;border:1px solid #e0efff;border-radius:3px;background:linear-gradient(#70a8ed,#1c5db8);font-weight:bold}
+/* Windows XP Luna caption buttons: crisp square corners, white inner edge and blue glass. */
+.window-actions button{width:21px;height:21px;display:grid;place-items:center;padding:0;border:1px solid #fff;border-radius:2px;box-shadow:inset 0 0 0 1px #2255b3,0 0 0 1px #164394;background:linear-gradient(#5fa0ff 0,#2e73db 48%,#1554bd 52%,#2d75de 100%);font:700 15px/1 Arial,sans-serif;text-shadow:1px 1px #0a3a91}
+.window-actions button[data-host-action="minimize"]{font-size:18px}
+.window-actions .minimize-glyph{transform:translate(-1px,1px)}
+.window-actions button:hover:not(:disabled){background:linear-gradient(#86bbff 0,#4388ec 48%,#1d64cf 52%,#4289ee 100%)}
+.player{display:grid;grid-template-rows:1fr 50px 38px;border-bottom:1px solid #6688c3;background:linear-gradient(#f7fbff,#c4d7fb)}
+.display{margin:9px 10px;padding:9px 10px 7px;color:#79ff41;border:2px inset #8da5d4;background:linear-gradient(135deg,#0c3429,#061c15);text-shadow:0 0 5px #76ff45}
+.lcd-title{overflow:hidden;white-space:nowrap;font:bold 17px 'Courier New',monospace;letter-spacing:1px}
+.lcd-meta{margin-top:3px;color:#caffb0;font:11px 'Courier New',monospace}
+.visualizer{height:64px;display:flex;align-items:end;justify-content:space-between;gap:2px;margin:7px 0;border-top:1px solid #347344;border-bottom:1px solid #347344}
+.bar{flex:1;min-width:2px;background:linear-gradient(#f8ff36 0 15%,#75ff3d 16% 65%,#18a934 66%);box-shadow:0 0 5px #62ff48;transition:height .06s linear}
+.time-row{display:grid;grid-template-columns:40px 1fr 40px;gap:6px;align-items:center;font-family:'Courier New',monospace}
+.time-row span:last-child{text-align:right}
+.controls{display:flex;align-items:center;gap:7px;padding:0 12px;background:linear-gradient(#dceaff,#b5caf4)}
+button{cursor:pointer}
+.controls button,.option-row button,footer button{height:27px;padding:3px 8px;color:#123b7d;border:1px solid #4d76bb;border-radius:4px;background:linear-gradient(#fff,#b9d0f5);font-weight:bold}
+.controls button{width:36px}
+.controls label{margin-left:auto;font-size:10px;font-weight:bold}
+.controls input{width:85px}
+.option-row{display:flex;align-items:center;gap:6px;padding:6px 10px;border-top:1px solid #7b9ed7;background:#d5e3fb}
+.option-row button.active{color:#fff;background:linear-gradient(#315fc2,#103b91)}
+.option-row .gear{font-size:16px;line-height:15px}
+.option-row .add{margin-left:auto;color:#fff;background:linear-gradient(#51a34f,#1e7023);border-color:#0a4e15}
+.playlist{display:grid;grid-template-rows:28px 25px 1fr 31px;min-height:0;background:#d5e3fb}
+.playlist header{display:flex;align-items:center;padding:0 9px;color:#fff;background:linear-gradient(#588bd7,#2453a7);font-weight:bold}
+.playlist header #count{margin-left:auto;font-size:10px}
+.playlist header button{margin-left:8px}
+.playlist-head{display:grid;grid-template-columns:38px 1fr 62px;padding:5px 9px;color:#fff;background:linear-gradient(#588bd7,#2453a7);font-size:10px}
+.playlist ol{margin:0;padding:0;overflow:auto;counter-reset:track;background:#071531;color:#e9f1ff;font:12px 'Courier New',monospace}
+.playlist li{display:grid;grid-template-columns:38px 1fr 62px;min-height:25px;padding:4px 9px;list-style:none;border-bottom:1px solid #152958;cursor:pointer}
+.playlist li:not(.empty)::before{content:counter(track,decimal-leading-zero);counter-increment:track;color:#7ea9ff}
+.playlist li.active,.playlist li:hover{background:#245dc2}
+.playlist .empty{display:block;padding:18px;color:#91a9d7}
+.name{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.length{text-align:right}
+.playlist footer{display:flex;align-items:center;gap:10px;padding:4px 8px;background:#d5e3fb}
+.playlist footer #status{margin-left:auto;font-weight:bold;color:#1b6490}
+.playlist.collapsed{grid-template-rows:28px}
+.playlist.collapsed>*:not(header){display:none}
+.app-shell.playlist-hidden{grid-template-rows:29px 1fr 28px}
+.settings-panel{position:fixed;inset:0;z-index:5;display:grid;place-items:center;background:#001c50a6}
+.settings-panel[hidden]{display:none}
+.settings-dialog{width:min(390px,calc(100vw - 36px));overflow:hidden;border:2px solid #0a3d91;border-radius:6px;background:#dceaff;box-shadow:5px 7px 18px #001544}
+.settings-dialog header{display:flex;align-items:center;height:29px;padding:0 8px;color:#fff;background:linear-gradient(#5798ee,#0d429e);font-weight:bold}
+.settings-dialog header button{margin-left:auto}
+.settings-dialog label{display:grid;grid-template-columns:140px 1fr auto;gap:10px;align-items:center;min-height:45px;padding:8px 12px;border-bottom:1px solid #a9bee6;color:#133b79;font-weight:bold}
+.settings-dialog select{padding:3px}
+.app-shell[data-theme="olive"] .app-titlebar{background:linear-gradient(#9aae50,#5c7819 48%,#3d5c0e)}
+.app-shell[data-theme="olive"] .playlist header,.app-shell[data-theme="olive"] .playlist-head{background:linear-gradient(#829f3f,#415f13)}
+.app-shell[data-theme="silver"] .app-titlebar{background:linear-gradient(#aeb9cc,#647491 48%,#45536f)}
+.app-shell[data-theme="silver"] .playlist header,.app-shell[data-theme="silver"] .playlist-head{background:linear-gradient(#9ba9bb,#52637c)}
+
+.player{min-height:0}
+.display{margin:6px 8px 0;padding:7px 8px 1px}
+.visualizer{height:128px;gap:1px;margin:5px 0}
+.bar{min-width:1px}
+.time-row{padding-bottom:0}
+.window-actions button:last-child{border-color:#fff;box-shadow:inset 0 0 0 1px #b82919,0 0 0 1px #81301f;background:linear-gradient(#ff9b81 0,#ef5638 48%,#cd2b1e 52%,#f35f42 100%);font-size:17px;text-shadow:1px 1px #8d180f}
+.window-actions button:last-child:hover:not(:disabled){background:linear-gradient(#ffc0ad 0,#ff7858 48%,#e13a28 52%,#ff8766 100%)}
+.window-actions .maximize-disabled{opacity:.8;cursor:default}
+.app-shell.playlist-hidden{min-height:0;grid-template-rows:29px minmax(0,1fr) 28px}
+.app-shell.playlist-hidden .player{min-height:0}
+.app-shell.playlist-hidden .display{min-height:0;margin-bottom:0}
+.app-shell.playlist-hidden .visualizer{height:128px;margin:5px 0}

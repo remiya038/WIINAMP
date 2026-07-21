@@ -1,0 +1,16 @@
+# Build outputs and local execution data
+bin/
+obj/
+publish/
+*.exe
+*.pdb
+*.WebView2/
+
+# IDE and user-specific files
+.vs/
+*.user
+*.suo
+
+# OS metadata
+Thumbs.db
+Desktop.ini
