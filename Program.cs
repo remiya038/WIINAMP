@@ -35,12 +35,32 @@ internal sealed class PlayerForm : Form
         MinimumSize = new Size(550, 380);
         StartPosition = FormStartPosition.CenterScreen;
         FormBorderStyle = FormBorderStyle.None;
+        BackColor = Color.FromArgb(7, 80, 172);
         ShowInTaskbar = true;
         ShowIcon = true;
         Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath) ?? SystemIcons.Application;
         Controls.Add(browser);
+        Resize += (_, _) => ApplyRoundedWindowRegion();
+        ApplyRoundedWindowRegion();
         FormClosed += (_, _) => systemMedia?.Dispose();
         Shown += async (_, _) => await OpenPlayerAsync();
+    }
+
+    private void ApplyRoundedWindowRegion()
+    {
+        if (Width <= 0 || Height <= 0) return;
+
+        var regionHandle = CreateRoundRectRgn(0, 0, Width + 1, Height + 1, 14, 14);
+        try
+        {
+            var roundedRegion = Region.FromHrgn(regionHandle);
+            Region?.Dispose();
+            Region = roundedRegion;
+        }
+        finally
+        {
+            DeleteObject(regionHandle);
+        }
     }
 
     private async Task OpenPlayerAsync()
@@ -85,6 +105,18 @@ internal sealed class PlayerForm : Form
 
     [DllImport("user32.dll")]
     private static extern bool ReleaseCapture();
+
+    [DllImport("gdi32.dll")]
+    private static extern IntPtr CreateRoundRectRgn(
+        int left,
+        int top,
+        int right,
+        int bottom,
+        int ellipseWidth,
+        int ellipseHeight);
+
+    [DllImport("gdi32.dll")]
+    private static extern bool DeleteObject(IntPtr objectHandle);
 
     [DllImport("user32.dll")]
     private static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, IntPtr lParam);

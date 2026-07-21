@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7dbaff"/>
+      <stop offset="0.48" stop-color="#2d76db"/>
+      <stop offset="0.52" stop-color="#1553b8"/>
+      <stop offset="1" stop-color="#2d75dc"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#163f7d"/><stop offset="1" stop-color="#0a2553"/>
+    </linearGradient>
+  </defs>
+  <rect x="14" y="14" width="228" height="228" rx="46" fill="url(#tile)" stroke="#08367f" stroke-width="9"/>
+  <rect x="30" y="30" width="196" height="196" rx="34" fill="none" stroke="#d9efff" stroke-width="7" opacity=".9"/>
+  <rect x="50" y="66" width="156" height="124" rx="14" fill="url(#screen)" stroke="#092c66" stroke-width="7"/>
+  <path d="M70 96l18 62 22-37 18 37 22-62 18 62 18-62" fill="none" stroke="#f4fffb" stroke-linecap="round" stroke-linejoin="round" stroke-width="13"/>
+  <path d="M71 177h20v-20h15v20h20v-30h15v30h20v-20h15v20h20" fill="none" stroke="#62ff77" stroke-linecap="round" stroke-linejoin="round" stroke-width="8"/>
+</svg>
