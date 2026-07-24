@@ -63,6 +63,8 @@ WebView2 Runtimeは通常のWindows 11に含まれています。搭載されて
 
 必要なものは.NET 8 SDKです。
 
+Windows XP風UIの共通仕様は、XPappワークスペースの `../docs/WINDOWS_XP_WINDOW_DESIGN.md` と `../docs/WINDOWS_XP_APP_IMPLEMENTATION.md` を正本として参照します。共通資料はこのプロジェクト内へ複製しません。
+
 ```powershell
 dotnet build .\WinampXp.csproj -c Release
 dotnet publish .\WinampXp.csproj -c Release -o .\publish
