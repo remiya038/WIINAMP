@@ -13,6 +13,9 @@ internal sealed class SystemMediaMonitor : IDisposable
     private readonly Action<string> send;
     private readonly System.Threading.Timer appleTimer;
     private bool enabled;
+    private bool disposed;
+    private int appleUpdateInProgress;
+    private readonly SemaphoreSlim applePublishLock = new(1, 1);
     private const int FftLength = 1024;
     private readonly Complex[] fftBuffer = new Complex[FftLength];
     private int fftPosition;
@@ -31,10 +34,11 @@ internal sealed class SystemMediaMonitor : IDisposable
     /// <summary>Forwards transport commands to Apple Music's Windows media session.</summary>
     public async Task ControlAppleMusicAsync(string command)
     {
-        if (mediaManager is null) return;
+        var currentManager = mediaManager;
+        if (currentManager is null) return;
         try
         {
-            var session = mediaManager.CurrentMediaSessions.Values.FirstOrDefault(s =>
+            var session = currentManager.CurrentMediaSessions.Values.FirstOrDefault(s =>
                 $"{s.Id} {s.ControlSession.SourceAppUserModelId}".Contains("apple", StringComparison.OrdinalIgnoreCase));
             if (session is null) return;
 
@@ -47,40 +51,102 @@ internal sealed class SystemMediaMonitor : IDisposable
                 case "stop": await session.ControlSession.TryStopAsync(); break;
             }
         }
-        catch { }
+        catch (Exception exception)
+        {
+            SendNotice($"Apple Music control failed: {FriendlyMessage(exception)}");
+        }
     }
 
     private void Start()
     {
-        capture = new WasapiLoopbackCapture();
-        capture.DataAvailable += OnAudioData;
-        capture.StartRecording();
-        mediaManager = new MediaManager();
-        mediaManager.OnAnyMediaPropertyChanged += (session, media) =>
+        if (enabled || disposed) return;
+
+        var problems = new List<string>();
+        TryStartAudioCapture(problems);
+        TryStartMediaManager(problems);
+
+        enabled = capture is not null || mediaManager is not null;
+        if (mediaManager is not null) appleTimer.Change(0, 750);
+        SendState(problems.Count == 0 ? null : string.Join(" / ", problems));
+    }
+
+    private void TryStartAudioCapture(List<string> problems)
+    {
+        try
         {
-            _ = PublishAppleMediaAsync(session, forceArtworkRefresh: true);
-        };
-        mediaManager.Start();
-        mediaManager.ForceUpdate();
-        foreach (var session in mediaManager.CurrentMediaSessions.Values) _ = PublishAppleMediaAsync(session, forceArtworkRefresh: true);
-        appleTimer.Change(0, 750);
-        enabled = true;
-        SendState();
+            capture = new WasapiLoopbackCapture();
+            capture.DataAvailable += OnAudioData;
+            capture.RecordingStopped += OnRecordingStopped;
+            capture.StartRecording();
+        }
+        catch (Exception exception)
+        {
+            ReleaseAudioCapture();
+            problems.Add($"Audio capture unavailable: {FriendlyMessage(exception)}");
+        }
+    }
+
+    private void TryStartMediaManager(List<string> problems)
+    {
+        try
+        {
+            mediaManager = new MediaManager();
+            mediaManager.OnAnyMediaPropertyChanged += OnAnyMediaPropertyChanged;
+            mediaManager.Start();
+            mediaManager.ForceUpdate();
+            foreach (var session in mediaManager.CurrentMediaSessions.Values)
+                _ = PublishAppleMediaAsync(session, forceArtworkRefresh: true);
+        }
+        catch (Exception exception)
+        {
+            ReleaseMediaManager();
+            problems.Add($"Media session unavailable: {FriendlyMessage(exception)}");
+        }
+    }
+
+    private void OnAnyMediaPropertyChanged(
+        MediaManager.MediaSession session,
+        Windows.Media.Control.GlobalSystemMediaTransportControlsSessionMediaProperties media)
+    {
+        _ = PublishAppleMediaAsync(session, forceArtworkRefresh: true);
     }
 
     private void Stop()
     {
         appleTimer.Change(Timeout.Infinite, Timeout.Infinite);
-        if (capture is not null)
-        {
-            capture.DataAvailable -= OnAudioData;
-            capture.StopRecording();
-            capture.Dispose();
-            capture = null;
-        }
-        mediaManager = null;
+        ReleaseAudioCapture();
+        ReleaseMediaManager();
         enabled = false;
         SendState();
+    }
+
+    private void ReleaseAudioCapture()
+    {
+        var previousCapture = capture;
+        capture = null;
+        if (previousCapture is null) return;
+
+        previousCapture.DataAvailable -= OnAudioData;
+        previousCapture.RecordingStopped -= OnRecordingStopped;
+        try { previousCapture.StopRecording(); }
+        catch { }
+        previousCapture.Dispose();
+    }
+
+    private void ReleaseMediaManager()
+    {
+        var previousManager = mediaManager;
+        mediaManager = null;
+        if (previousManager is not null)
+            previousManager.OnAnyMediaPropertyChanged -= OnAnyMediaPropertyChanged;
+    }
+
+    private void OnRecordingStopped(object? sender, StoppedEventArgs eventArgs)
+    {
+        if (disposed || eventArgs.Exception is null) return;
+        ReleaseAudioCapture();
+        if (mediaManager is null) enabled = false;
+        SendState($"Audio capture stopped: {FriendlyMessage(eventArgs.Exception)}");
     }
 
     private void OnAudioData(object? sender, WaveInEventArgs e)
@@ -120,6 +186,7 @@ internal sealed class SystemMediaMonitor : IDisposable
     private void Send(object value) => send(JsonSerializer.Serialize(value));
     private async Task PublishAppleMediaAsync(MediaManager.MediaSession session, bool forceArtworkRefresh = false)
     {
+        await applePublishLock.WaitAsync();
         try
         {
             var source = $"{session.Id} {session.ControlSession.SourceAppUserModelId}";
@@ -138,6 +205,10 @@ internal sealed class SystemMediaMonitor : IDisposable
             Send(new { type = "appleMusic", title = media.Title, artist = media.Artist, album = media.AlbumTitle, artwork = artworkDataUrl, playing = playback.PlaybackStatus.ToString() == "Playing", elapsed = timeline.Position.TotalSeconds, duration });
         }
         catch { }
+        finally
+        {
+            applePublishLock.Release();
+        }
     }
 
     private static async Task<string?> ReadArtworkAsync(IRandomAccessStreamReference? thumbnail)
@@ -165,9 +236,35 @@ internal sealed class SystemMediaMonitor : IDisposable
     }
     private async Task UpdateAppleMusicAsync()
     {
-        if (!enabled || mediaManager is null) return;
-        foreach (var session in mediaManager.CurrentMediaSessions.Values) await PublishAppleMediaAsync(session);
+        var currentManager = mediaManager;
+        if (!enabled || currentManager is null || Interlocked.Exchange(ref appleUpdateInProgress, 1) != 0) return;
+        try
+        {
+            foreach (var session in currentManager.CurrentMediaSessions.Values)
+                await PublishAppleMediaAsync(session);
+        }
+        catch (Exception exception)
+        {
+            SendNotice($"Apple Music update failed: {FriendlyMessage(exception)}");
+        }
+        finally
+        {
+            Volatile.Write(ref appleUpdateInProgress, 0);
+        }
     }
-    private void SendState() => Send(new { type = "systemAudioState", enabled });
-    public void Dispose() { Stop(); appleTimer.Dispose(); }
+    private void SendState(string? message = null) => Send(new { type = "systemAudioState", enabled, message });
+    private void SendNotice(string message) => Send(new { type = "systemAudioNotice", message });
+    private static string FriendlyMessage(Exception exception) =>
+        string.IsNullOrWhiteSpace(exception.Message) ? exception.GetType().Name : exception.Message;
+
+    public void Dispose()
+    {
+        if (disposed) return;
+        disposed = true;
+        appleTimer.Change(Timeout.Infinite, Timeout.Infinite);
+        ReleaseAudioCapture();
+        ReleaseMediaManager();
+        enabled = false;
+        appleTimer.Dispose();
+    }
 }

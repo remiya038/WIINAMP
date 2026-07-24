@@ -43,7 +43,22 @@ internal sealed class PlayerForm : Form
         Resize += (_, _) => ApplyRoundedWindowRegion();
         ApplyRoundedWindowRegion();
         FormClosed += (_, _) => systemMedia?.Dispose();
-        Shown += async (_, _) => await OpenPlayerAsync();
+        Shown += async (_, _) =>
+        {
+            try
+            {
+                await OpenPlayerAsync();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(
+                    $"WIINAMPを開始できませんでした。\n\n{exception.Message}",
+                    "WIINAMP",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                Close();
+            }
+        };
     }
 
     private void ApplyRoundedWindowRegion()
@@ -78,8 +93,19 @@ internal sealed class PlayerForm : Form
 
     private void PostToWeb(string json)
     {
-        if (IsDisposed || !browser.IsHandleCreated) return;
-        BeginInvoke(() => browser.CoreWebView2?.PostWebMessageAsJson(json));
+        if (IsDisposed || Disposing || !IsHandleCreated || !browser.IsHandleCreated) return;
+        try
+        {
+            BeginInvoke(() =>
+            {
+                if (!IsDisposed && !Disposing)
+                    browser.CoreWebView2?.PostWebMessageAsJson(json);
+            });
+        }
+        catch (InvalidOperationException)
+        {
+            // The form can close between the state checks and BeginInvoke.
+        }
     }
 
     private void HandleHostAction(string action)

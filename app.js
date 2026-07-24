@@ -56,7 +56,9 @@ audio.onended=()=>repeating?(audio.currentTime=0,audio.play()):step(1);
 function updateArtwork(source){const artwork=$('#artwork'),next=source||fallbackArtwork;artwork.onerror=()=>{if(artwork.dataset.fallback!=='true'){artwork.dataset.fallback='true';artwork.src=fallbackArtwork}else{artwork.removeAttribute('src');artwork.hidden=true}};if(artwork.getAttribute('src')!==next){artwork.dataset.fallback=next===fallbackArtwork?'true':'';artwork.src=next}artwork.hidden=false}
 window.chrome?.webview?.addEventListener('message',e=>{const d=e.data;if(d.type==='frequencyBands')systemBands=d.bands;else if(d.type==='systemAudio')systemLevel=d.level;else if(d.type==='systemAudioState'){isSystemMix=d.enabled;
 $('#systemAudio').classList.toggle('active',d.enabled);
-$('#status').textContent=d.enabled?'SYSTEM MIX ACTIVE':'SYSTEM MIX OFF'}else if(d.type==='appleMusic'&&isSystemMix){$('#trackTitle').textContent=d.title||'APPLE MUSIC';updateArtwork(d.artwork);
+$('#status').textContent=d.message?(d.enabled?'SYSTEM MIX LIMITED':'SYSTEM MIX UNAVAILABLE'):(d.enabled?'SYSTEM MIX ACTIVE':'SYSTEM MIX OFF');
+$('#status').title=d.message||''}else if(d.type==='systemAudioNotice'){$('#status').textContent='SYSTEM MIX WARNING';
+$('#status').title=d.message||''}else if(d.type==='appleMusic'&&isSystemMix){$('#trackTitle').textContent=d.title||'APPLE MUSIC';updateArtwork(d.artwork);
 $('#trackInfo').textContent=[d.artist,d.album].filter(Boolean).join(' — ')||'APPLE MUSIC';if(d.duration>0){$('#elapsed').textContent=time(d.elapsed);
 $('#duration').textContent=time(d.duration);
 $('#seek').value=d.elapsed/d.duration*100}}});

@@ -11,6 +11,7 @@
     <AssemblyName>WIINAMP</AssemblyName>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <ApplicationIcon>wiinamp.ico</ApplicationIcon>
+    <Product>WIINAMP</Product>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3856.49" />
@@ -23,4 +24,9 @@
     <EmbeddedResource Include="app.js" LogicalName="web.app.js" />
     <EmbeddedResource Include="default-artwork.png" LogicalName="web.default-artwork.png" />
   </ItemGroup>
+  <Target Name="RemoveUnusedWebView2WpfReference" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <Reference Remove="@(Reference)" Condition="'%(Reference.Filename)' == 'Microsoft.Web.WebView2.Wpf'" />
+    </ItemGroup>
+  </Target>
 </Project>
