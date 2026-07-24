@@ -11,11 +11,13 @@ audio.src=tracks[i].url;
 $('#trackTitle').textContent=tracks[i].name.toUpperCase();
 $('#trackInfo').textContent='LOCAL MEDIA';render();if(play)audio.play()}
 function step(n){if(!tracks.length)return;let i=shuffled?Math.floor(Math.random()*tracks.length):current+n;if(i<0)i=tracks.length-1;if(i>=tracks.length)i=0;load(i,true)}
-function post(v){window.chrome?.webview?.postMessage(v)}function save(){localStorage.setItem(key,JSON.stringify({top:$('#alwaysOnTop').checked,sensitivity:$('#sensitivity').value,theme:$('#theme').value,visualizerMode,mini:$('#miniMode').checked}))}function settings(){let s={};try{s=JSON.parse(localStorage.getItem(key)||'{}')}catch{}$('#alwaysOnTop').checked=!!s.top;
+function selectedWindowMode(){return document.querySelector('input[name="windowMode"]:checked')?.value||'normal'}
+function applyWindowMode(mode){const mini=mode==='mini';$('.app-shell').classList.toggle('mini-mode',mini);post(`mini-mode:${mini}`)}
+function post(v){window.chrome?.webview?.postMessage(v)}function save(){localStorage.setItem(key,JSON.stringify({top:$('#alwaysOnTop').checked,sensitivity:$('#sensitivity').value,theme:$('#theme').value,visualizerMode,mini:selectedWindowMode()==='mini'}))}function settings(){let s={};try{s=JSON.parse(localStorage.getItem(key)||'{}')}catch{}$('#alwaysOnTop').checked=!!s.top;
 $('#sensitivity').value=s.sensitivity||100;
 $('#theme').value=s.theme||'luna';sensitivity=$('#sensitivity').value/100;
-visualizerMode=s.visualizerMode||'spectrum';$('#visualizerMode').value=visualizerMode;$('#visualizer').dataset.mode=visualizerMode;$('#miniMode').checked=!!s.mini;$('.app-shell').classList.toggle('mini-mode',!!s.mini);
-post(`mini-mode:${!!s.mini}`);
+visualizerMode=s.visualizerMode||'spectrum';$('#visualizerMode').value=visualizerMode;$('#visualizer').dataset.mode=visualizerMode;
+$(s.mini?'#windowModeMini':'#windowModeNormal').checked=true;applyWindowMode(s.mini?'mini':'normal');
 $('#sensitivityValue').textContent=`${$('#sensitivity').value}%`;
 $('.app-shell').dataset.theme=$('#theme').value;post(`always-on-top:${$('#alwaysOnTop').checked}`)}
 $('#openFiles').onclick=()=>$('#fileInput').click();
@@ -46,7 +48,7 @@ $('#sensitivity').oninput=()=>{sensitivity=$('#sensitivity').value/100;
 $('#sensitivityValue').textContent=`${$('#sensitivity').value}%`;save()};
 $('#theme').onchange=()=>{$('.app-shell').dataset.theme=$('#theme').value;save()};
 $('#visualizerMode').onchange=e=>{visualizerMode=e.target.value;$('#visualizer').dataset.mode=visualizerMode;save()};
-$('#miniMode').onchange=e=>{$('.app-shell').classList.toggle('mini-mode',e.target.checked);post(`mini-mode:${e.target.checked}`);save()};
+document.querySelectorAll('input[name="windowMode"]').forEach(input=>input.onchange=e=>{if(e.target.checked){applyWindowMode(e.target.value);save()}});
 
 audio.ontimeupdate=()=>{$('#elapsed').textContent=time(audio.currentTime);
 $('#seek').value=audio.duration?audio.currentTime/audio.duration*100:0};
