@@ -71,9 +71,11 @@ button{cursor:pointer}
 .settings-dialog header{display:flex;align-items:center;height:29px;padding:0 8px;color:#fff;background:linear-gradient(#5798ee,#0d429e);font-weight:bold}
 .settings-dialog header button{margin-left:auto}
 .settings-dialog>label,.settings-row{display:grid;grid-template-columns:140px 1fr auto;gap:10px;align-items:center;min-height:45px;padding:8px 12px;border-bottom:1px solid #a9bee6;color:#133b79;font-weight:bold}
-.radio-options{display:flex;align-items:center;gap:18px}
-.radio-options label{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-weight:bold}
-.radio-options input{margin:0;accent-color:#246bc4}
+.toggle-button{grid-column:2/4;position:relative;display:flex;align-items:center;justify-content:flex-end;width:76px;height:26px;padding:2px 7px 2px 29px;color:#41506a;border:1px solid #7d91b4;border-radius:13px;background:linear-gradient(#f8faff,#c5cfdf);box-shadow:inset 0 1px #fff;font:bold 10px Tahoma,sans-serif}
+.toggle-button .toggle-knob{position:absolute;left:3px;width:20px;height:20px;border:1px solid #7184a5;border-radius:50%;background:linear-gradient(#fff,#d2dae7);box-shadow:1px 1px 2px #50617c66}
+.toggle-button.active{justify-content:flex-start;padding:2px 29px 2px 8px;color:#fff;border-color:#174b9c;background:linear-gradient(#65a5f1,#1e62bd);text-shadow:1px 1px #16458b}
+.toggle-button.active .toggle-knob{left:51px;border-color:#164d9d;background:linear-gradient(#fff,#dbeaff)}
+.toggle-button:focus-visible{outline:2px solid #ffb51b;outline-offset:2px}
 .settings-dialog select{padding:3px}
 .app-shell[data-theme="olive"] .app-titlebar{background:linear-gradient(#9aae50,#5c7819 48%,#3d5c0e)}
 .app-shell[data-theme="olive"] .playlist header,.app-shell[data-theme="olive"] .playlist-head{background:linear-gradient(#829f3f,#415f13)}
@@ -84,13 +86,15 @@ button{cursor:pointer}
 .app-shell[data-theme="olive"] .settings-dialog header{background:linear-gradient(#9aae50,#526d16 52%,#3d5c0e)}
 .app-shell[data-theme="olive"] .settings-dialog>label,.app-shell[data-theme="olive"] .settings-row{border-bottom-color:#b8c58d;color:#405516}
 .app-shell[data-theme="olive"] .settings-dialog header button{background:linear-gradient(#a9bd61,#59771b);box-shadow:inset 0 0 0 1px #6d8731,0 0 0 1px #314a0c}
-.app-shell[data-theme="olive"] .radio-options input{accent-color:#5c7819}
+.app-shell[data-theme="olive"] .toggle-button.active{border-color:#405e11;background:linear-gradient(#a4b957,#587719);text-shadow:1px 1px #31480c}
+.app-shell[data-theme="olive"] .toggle-button.active .toggle-knob{border-color:#405e11}
 .app-shell[data-theme="silver"] .settings-panel{background:#263044b8}
 .app-shell[data-theme="silver"] .settings-dialog{border-color:#465570;background:#e5e8ef;box-shadow:5px 7px 18px #222b3a}
 .app-shell[data-theme="silver"] .settings-dialog header{background:linear-gradient(#b8c2d2,#6c7b97 52%,#45536f)}
 .app-shell[data-theme="silver"] .settings-dialog>label,.app-shell[data-theme="silver"] .settings-row{border-bottom-color:#bcc4d0;color:#465570}
 .app-shell[data-theme="silver"] .settings-dialog header button{background:linear-gradient(#c3cbd7,#65738d);box-shadow:inset 0 0 0 1px #7b879a,0 0 0 1px #3c485d}
-.app-shell[data-theme="silver"] .radio-options input{accent-color:#647491}
+.app-shell[data-theme="silver"] .toggle-button.active{border-color:#465570;background:linear-gradient(#aeb9cb,#65748f);text-shadow:1px 1px #3f4c61}
+.app-shell[data-theme="silver"] .toggle-button.active .toggle-knob{border-color:#465570}
 
 .player{min-height:0}
 .display{margin:6px 8px 0;padding:7px 8px 1px}
@@ -137,4 +141,6 @@ body{background:#0750ac}
 .app-shell.mini-mode .settings-dialog{width:calc(100vw - 24px);max-height:calc(100vh - 18px);overflow:auto}
 .app-shell.mini-mode .settings-dialog header{height:25px}
 .app-shell.mini-mode .settings-dialog>label,.app-shell.mini-mode .settings-row{grid-template-columns:112px 1fr auto;min-height:32px;padding:4px 8px;gap:6px;font-size:10px}
-.app-shell.mini-mode .radio-options{gap:12px}
+.app-shell.mini-mode .toggle-button{width:68px;height:23px}
+.app-shell.mini-mode .toggle-button .toggle-knob{width:17px;height:17px}
+.app-shell.mini-mode .toggle-button.active .toggle-knob{left:46px}

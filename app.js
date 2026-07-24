@@ -11,15 +11,16 @@ audio.src=tracks[i].url;
 $('#trackTitle').textContent=tracks[i].name.toUpperCase();
 $('#trackInfo').textContent='LOCAL MEDIA';render();if(play)audio.play()}
 function step(n){if(!tracks.length)return;let i=shuffled?Math.floor(Math.random()*tracks.length):current+n;if(i<0)i=tracks.length-1;if(i>=tracks.length)i=0;load(i,true)}
-function selectedWindowMode(){return document.querySelector('input[name="windowMode"]:checked')?.value||'normal'}
-function applyWindowMode(mode){const mini=mode==='mini';$('.app-shell').classList.toggle('mini-mode',mini);post(`mini-mode:${mini}`)}
-function post(v){window.chrome?.webview?.postMessage(v)}function save(){localStorage.setItem(key,JSON.stringify({top:$('#alwaysOnTop').checked,sensitivity:$('#sensitivity').value,theme:$('#theme').value,visualizerMode,mini:selectedWindowMode()==='mini'}))}function settings(){let s={};try{s=JSON.parse(localStorage.getItem(key)||'{}')}catch{}$('#alwaysOnTop').checked=!!s.top;
+function toggleValue(button){return button.getAttribute('aria-checked')==='true'}
+function setToggle(button,active){button.setAttribute('aria-checked',String(active));button.classList.toggle('active',active);button.querySelector('.toggle-text').textContent=active?'ON':'OFF'}
+function applyMiniMode(mini){$('.app-shell').classList.toggle('mini-mode',mini);post(`mini-mode:${mini}`)}
+function post(v){window.chrome?.webview?.postMessage(v)}function save(){localStorage.setItem(key,JSON.stringify({top:toggleValue($('#alwaysOnTopToggle')),sensitivity:$('#sensitivity').value,theme:$('#theme').value,visualizerMode,mini:toggleValue($('#miniModeToggle'))}))}function settings(){let s={};try{s=JSON.parse(localStorage.getItem(key)||'{}')}catch{}setToggle($('#alwaysOnTopToggle'),!!s.top);
 $('#sensitivity').value=s.sensitivity||100;
 $('#theme').value=s.theme||'luna';sensitivity=$('#sensitivity').value/100;
 visualizerMode=s.visualizerMode||'spectrum';$('#visualizerMode').value=visualizerMode;$('#visualizer').dataset.mode=visualizerMode;
-$(s.mini?'#windowModeMini':'#windowModeNormal').checked=true;applyWindowMode(s.mini?'mini':'normal');
+setToggle($('#miniModeToggle'),!!s.mini);applyMiniMode(!!s.mini);
 $('#sensitivityValue').textContent=`${$('#sensitivity').value}%`;
-$('.app-shell').dataset.theme=$('#theme').value;post(`always-on-top:${$('#alwaysOnTop').checked}`)}
+$('.app-shell').dataset.theme=$('#theme').value;post(`always-on-top:${toggleValue($('#alwaysOnTopToggle'))}`)}
 $('#openFiles').onclick=()=>$('#fileInput').click();
 $('#fileInput').onchange=e=>addFiles(e.target.files);
 $('#play').onclick=()=>{if(current<0&&tracks.length)load(0);
@@ -43,12 +44,12 @@ $('#closeSettings').onclick=()=>$('#settingsPanel').hidden=true;
 $('#togglePlaylist').onclick=()=>{const c=$('#playlist').classList.toggle('collapsed');
 $('.app-shell').classList.toggle('playlist-hidden',c);
 $('#togglePlaylist').textContent=c?'+':'−';post(`playlist-collapsed:${c}`)};
-$('#alwaysOnTop').onchange=()=>{save();post(`always-on-top:${$('#alwaysOnTop').checked}`)};
+$('#alwaysOnTopToggle').onclick=e=>{const active=!toggleValue(e.currentTarget);setToggle(e.currentTarget,active);save();post(`always-on-top:${active}`)};
 $('#sensitivity').oninput=()=>{sensitivity=$('#sensitivity').value/100;
 $('#sensitivityValue').textContent=`${$('#sensitivity').value}%`;save()};
 $('#theme').onchange=()=>{$('.app-shell').dataset.theme=$('#theme').value;save()};
 $('#visualizerMode').onchange=e=>{visualizerMode=e.target.value;$('#visualizer').dataset.mode=visualizerMode;save()};
-document.querySelectorAll('input[name="windowMode"]').forEach(input=>input.onchange=e=>{if(e.target.checked){applyWindowMode(e.target.value);save()}});
+$('#miniModeToggle').onclick=e=>{const active=!toggleValue(e.currentTarget);setToggle(e.currentTarget,active);applyMiniMode(active);save()};
 
 audio.ontimeupdate=()=>{$('#elapsed').textContent=time(audio.currentTime);
 $('#seek').value=audio.duration?audio.currentTime/audio.duration*100:0};
