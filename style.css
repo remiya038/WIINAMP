@@ -85,14 +85,12 @@ button{cursor:pointer}
 .app-shell[data-theme="olive"] .settings-dialog{border-color:#3f5e10;background:#e7edcf;box-shadow:5px 7px 18px #1d2905}
 .app-shell[data-theme="olive"] .settings-dialog header{background:linear-gradient(#9aae50,#526d16 52%,#3d5c0e)}
 .app-shell[data-theme="olive"] .settings-dialog>label,.app-shell[data-theme="olive"] .settings-row{border-bottom-color:#b8c58d;color:#405516}
-.app-shell[data-theme="olive"] .settings-dialog header button{background:linear-gradient(#a9bd61,#59771b);box-shadow:inset 0 0 0 1px #6d8731,0 0 0 1px #314a0c}
 .app-shell[data-theme="olive"] .toggle-button.active{border-color:#405e11;background:linear-gradient(#a4b957,#587719);text-shadow:1px 1px #31480c}
 .app-shell[data-theme="olive"] .toggle-button.active .toggle-knob{border-color:#405e11}
 .app-shell[data-theme="silver"] .settings-panel{background:#263044b8}
 .app-shell[data-theme="silver"] .settings-dialog{border-color:#465570;background:#e5e8ef;box-shadow:5px 7px 18px #222b3a}
 .app-shell[data-theme="silver"] .settings-dialog header{background:linear-gradient(#b8c2d2,#6c7b97 52%,#45536f)}
 .app-shell[data-theme="silver"] .settings-dialog>label,.app-shell[data-theme="silver"] .settings-row{border-bottom-color:#bcc4d0;color:#465570}
-.app-shell[data-theme="silver"] .settings-dialog header button{background:linear-gradient(#c3cbd7,#65738d);box-shadow:inset 0 0 0 1px #7b879a,0 0 0 1px #3c485d}
 .app-shell[data-theme="silver"] .toggle-button.active{border-color:#465570;background:linear-gradient(#aeb9cb,#65748f);text-shadow:1px 1px #3f4c61}
 .app-shell[data-theme="silver"] .toggle-button.active .toggle-knob{border-color:#465570}
 
@@ -118,8 +116,8 @@ body{background:#0750ac}
 .window-actions button[data-host-action="minimize"]{font-size:18px}
 .window-actions .minimize-glyph{transform:translate(-1px,1px)}
 .window-actions button:hover:not(:disabled){background:linear-gradient(#91c2fb,#377bd7 52%,#205eb9)}
-.window-actions button:last-child{border-color:#ffd2d2;box-shadow:inset 0 0 0 1px #cf3c2c,0 0 0 1px #81301f;background:linear-gradient(#f58f8f,#d63838 52%,#a91616);font-size:17px}
-.window-actions button:last-child:hover:not(:disabled){border-color:#fff0ec;background:linear-gradient(#ffb0a9,#e64c3d 52%,#ba2118)}
+.window-actions button:last-child,.settings-dialog header button{border-color:#ffd2d2;box-shadow:inset 0 0 0 1px #cf3c2c,0 0 0 1px #81301f;background:linear-gradient(#f58f8f,#d63838 52%,#a91616);font-size:17px;text-shadow:1px 1px #8d180f}
+.window-actions button:last-child:hover:not(:disabled),.settings-dialog header button:hover{border-color:#fff0ec;background:linear-gradient(#ffb0a9,#e64c3d 52%,#ba2118)}
 .settings-dialog{border-radius:7px}
 
 /* Compact player: a scaled-down version of the regular player, contained
