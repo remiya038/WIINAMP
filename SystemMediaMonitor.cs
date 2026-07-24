@@ -1,6 +1,7 @@
 using NAudio.Wave;
 using NAudio.Dsp;
 using WindowsMediaController;
+using Windows.Storage.Streams;
 using System.Text.Json;
 
 namespace WinampXp;
@@ -15,6 +16,8 @@ internal sealed class SystemMediaMonitor : IDisposable
     private const int FftLength = 1024;
     private readonly Complex[] fftBuffer = new Complex[FftLength];
     private int fftPosition;
+    private string? artworkKey;
+    private string? artworkDataUrl;
 
     public SystemMediaMonitor(Action<string> messageSender)
     {
@@ -55,11 +58,11 @@ internal sealed class SystemMediaMonitor : IDisposable
         mediaManager = new MediaManager();
         mediaManager.OnAnyMediaPropertyChanged += (session, media) =>
         {
-            _ = PublishAppleMediaAsync(session);
+            _ = PublishAppleMediaAsync(session, forceArtworkRefresh: true);
         };
         mediaManager.Start();
         mediaManager.ForceUpdate();
-        foreach (var session in mediaManager.CurrentMediaSessions.Values) _ = PublishAppleMediaAsync(session);
+        foreach (var session in mediaManager.CurrentMediaSessions.Values) _ = PublishAppleMediaAsync(session, forceArtworkRefresh: true);
         appleTimer.Change(0, 750);
         enabled = true;
         SendState();
@@ -115,7 +118,7 @@ internal sealed class SystemMediaMonitor : IDisposable
     }
 
     private void Send(object value) => send(JsonSerializer.Serialize(value));
-    private async Task PublishAppleMediaAsync(MediaManager.MediaSession session)
+    private async Task PublishAppleMediaAsync(MediaManager.MediaSession session, bool forceArtworkRefresh = false)
     {
         try
         {
@@ -125,9 +128,40 @@ internal sealed class SystemMediaMonitor : IDisposable
             var playback = session.ControlSession.GetPlaybackInfo();
             var timeline = session.ControlSession.GetTimelineProperties();
             var duration = Math.Max(0, (timeline.EndTime - timeline.StartTime).TotalSeconds);
-            Send(new { type = "appleMusic", title = media.Title, artist = media.Artist, album = media.AlbumTitle, playing = playback.PlaybackStatus.ToString() == "Playing", elapsed = timeline.Position.TotalSeconds, duration });
+            var currentArtworkKey = $"{media.Title}\u001f{media.Artist}\u001f{media.AlbumTitle}";
+            if (forceArtworkRefresh || artworkDataUrl is null || !string.Equals(artworkKey, currentArtworkKey, StringComparison.Ordinal))
+            {
+                artworkKey = currentArtworkKey;
+                artworkDataUrl = await ReadArtworkAsync(media.Thumbnail);
+            }
+
+            Send(new { type = "appleMusic", title = media.Title, artist = media.Artist, album = media.AlbumTitle, artwork = artworkDataUrl, playing = playback.PlaybackStatus.ToString() == "Playing", elapsed = timeline.Position.TotalSeconds, duration });
         }
         catch { }
+    }
+
+    private static async Task<string?> ReadArtworkAsync(IRandomAccessStreamReference? thumbnail)
+    {
+        if (thumbnail is null) return null;
+
+        using var stream = await thumbnail.OpenReadAsync();
+        if (stream.Size is 0 or > 5 * 1024 * 1024) return null;
+
+        using var reader = new DataReader(stream);
+        await reader.LoadAsync((uint)stream.Size);
+        var bytes = new byte[(int)stream.Size];
+        reader.ReadBytes(bytes);
+        var contentType = DetectImageContentType(bytes);
+        return $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
+    }
+
+    private static string DetectImageContentType(byte[] bytes)
+    {
+        if (bytes.Length >= 8 && bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47) return "image/png";
+        if (bytes.Length >= 3 && bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF) return "image/jpeg";
+        if (bytes.Length >= 6 && bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46) return "image/gif";
+        if (bytes.Length >= 12 && bytes[0] == 0x52 && bytes[1] == 0x49 && bytes[2] == 0x46 && bytes[8] == 0x57 && bytes[9] == 0x45 && bytes[10] == 0x42 && bytes[11] == 0x50) return "image/webp";
+        return "image/jpeg";
     }
     private async Task UpdateAppleMusicAsync()
     {

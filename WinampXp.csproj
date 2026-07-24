@@ -21,5 +21,6 @@
     <EmbeddedResource Include="index.html" LogicalName="web.index.html" />
     <EmbeddedResource Include="style.css" LogicalName="web.style.css" />
     <EmbeddedResource Include="app.js" LogicalName="web.app.js" />
+    <EmbeddedResource Include="default-artwork.png" LogicalName="web.default-artwork.png" />
   </ItemGroup>
 </Project>

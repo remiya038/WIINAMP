@@ -12,10 +12,30 @@ body{margin:0;overflow:hidden;background:#0750ac}
 .window-actions button:hover:not(:disabled){background:linear-gradient(#86bbff 0,#4388ec 48%,#1d64cf 52%,#4289ee 100%)}
 .player{display:grid;grid-template-rows:1fr 50px 38px;border-bottom:1px solid #6688c3;background:linear-gradient(#f7fbff,#c4d7fb)}
 .display{margin:9px 10px;padding:9px 10px 7px;color:#79ff41;border:2px inset #8da5d4;background:linear-gradient(135deg,#0c3429,#061c15);text-shadow:0 0 5px #76ff45}
+.now-playing{display:flex;min-height:42px;gap:8px;align-items:center}
+.track-copy{min-width:0;flex:1}
+.artwork-frame{width:42px;height:42px;flex:0 0 42px;overflow:hidden;border:1px solid #8aff65;background:linear-gradient(135deg,#2c6c3c,#0b2619);box-shadow:inset 0 0 0 1px #03170d}
+.artwork-frame img{display:block;width:100%;height:100%;object-fit:cover}
 .lcd-title{overflow:hidden;white-space:nowrap;font:bold 17px 'Courier New',monospace;letter-spacing:1px}
 .lcd-meta{margin-top:3px;color:#caffb0;font:11px 'Courier New',monospace}
 .visualizer{height:64px;display:flex;align-items:end;justify-content:space-between;gap:2px;margin:7px 0;border-top:1px solid #347344;border-bottom:1px solid #347344}
-.bar{flex:1;min-width:2px;background:linear-gradient(#f8ff36 0 15%,#75ff3d 16% 65%,#18a934 66%);box-shadow:0 0 5px #62ff48;transition:height .06s linear}
+.bar{position:relative;flex:1;min-width:2px;background:linear-gradient(#f8ff36 0 15%,#75ff3d 16% 65%,#18a934 66%);box-shadow:0 0 5px #62ff48;transition:height .06s linear}
+.bar::after{content:"";position:absolute;left:0;right:0;top:calc(-1 * var(--peak-offset));height:2px;background:#fffbb4;box-shadow:0 0 4px #fff}
+.visualizer[data-mode="segments"] .bar{background:repeating-linear-gradient(to top,#1baa36 0 5px,#75ff3d 5px 9px,#092d19 9px 11px)}
+.visualizer[data-mode="dots"] .bar{background:repeating-linear-gradient(to top,#6dff5d 0 3px,transparent 3px 7px);box-shadow:none}
+.app-shell.mini-mode{grid-template-rows:29px 1fr}
+.app-shell.mini-mode .option-row,.app-shell.mini-mode .playlist{display:none}
+.mini-settings{display:none}
+.app-shell.mini-mode .mini-settings{display:grid;place-items:center;font-size:14px}
+.app-shell.mini-mode .player{grid-template-rows:minmax(0,1fr) 42px;min-height:0;overflow:hidden}
+.app-shell.mini-mode .display{display:grid;grid-template-rows:34px minmax(0,1fr) 20px;min-height:0;margin:4px 6px;padding:4px 6px}
+.app-shell.mini-mode .now-playing{min-height:34px}
+.app-shell.mini-mode .artwork-frame{width:32px;height:32px;flex-basis:32px}
+.app-shell.mini-mode .lcd-title{font-size:14px}
+.app-shell.mini-mode .visualizer{height:auto;min-height:0;margin:2px 0}
+.app-shell.mini-mode .time-row{font-size:10px}
+.app-shell.mini-mode .controls{padding:0 8px}
+.app-shell.mini-mode .controls label{display:none}
 .time-row{display:grid;grid-template-columns:40px 1fr 40px;gap:6px;align-items:center;font-family:'Courier New',monospace}
 .time-row span:last-child{text-align:right}
 .controls{display:flex;align-items:center;gap:7px;padding:0 12px;background:linear-gradient(#dceaff,#b5caf4)}
@@ -82,3 +102,23 @@ body{background:#0750ac}
 .window-actions button:last-child{border-color:#ffd2d2;box-shadow:inset 0 0 0 1px #cf3c2c,0 0 0 1px #81301f;background:linear-gradient(#f58f8f,#d63838 52%,#a91616);font-size:17px}
 .window-actions button:last-child:hover:not(:disabled){border-color:#fff0ec;background:linear-gradient(#ffb0a9,#e64c3d 52%,#ba2118)}
 .settings-dialog{border-radius:7px}
+
+/* Compact player: a scaled-down version of the regular player, contained
+   entirely within the green display frame and with controls below it. */
+.controls .mini-settings{display:none}
+.app-shell.mini-mode{grid-template-rows:29px minmax(0,1fr)}
+.app-shell.mini-mode .option-row,.app-shell.mini-mode .playlist{display:none}
+.app-shell.mini-mode .player{grid-template-rows:minmax(0,1fr) 42px;min-height:0;overflow:hidden}
+.app-shell.mini-mode .display{display:grid;grid-template-rows:34px minmax(0,1fr) 18px;min-height:0;margin:4px 6px;padding:4px 6px 2px}
+.app-shell.mini-mode .now-playing{min-height:34px}
+.app-shell.mini-mode .artwork-frame{width:30px;height:30px;flex-basis:30px}
+.app-shell.mini-mode .lcd-title{font-size:14px}
+.app-shell.mini-mode .lcd-meta{font-size:9px}
+.app-shell.mini-mode .visualizer{height:auto;min-height:0;margin:2px 0;overflow:hidden}
+.app-shell.mini-mode .time-row{font-size:10px;line-height:14px}
+.app-shell.mini-mode .controls{height:42px;padding:0 8px;gap:5px}
+.app-shell.mini-mode .controls label{display:none}
+.app-shell.mini-mode .controls .mini-settings{display:block;margin-left:auto;width:36px;font-size:16px;line-height:18px}
+.app-shell.mini-mode .settings-dialog{width:calc(100vw - 24px);max-height:calc(100vh - 18px);overflow:auto}
+.app-shell.mini-mode .settings-dialog header{height:25px}
+.app-shell.mini-mode .settings-dialog label{grid-template-columns:112px 1fr auto;min-height:32px;padding:4px 8px;gap:6px;font-size:10px}

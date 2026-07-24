@@ -18,14 +18,20 @@
     </header>
     <section class="player">
       <div class="display">
-        <div class="lcd-title" id="trackTitle">APPLE MUSIC / SYSTEM MIX</div>
-        <div class="lcd-meta" id="trackInfo">PRESS SYSTEM MIX TO START</div>
+        <div class="now-playing">
+          <div class="track-copy">
+            <div class="lcd-title" id="trackTitle">APPLE MUSIC / SYSTEM MIX</div>
+            <div class="lcd-meta" id="trackInfo">PRESS SYSTEM MIX TO START</div>
+          </div>
+          <div class="artwork-frame"><img id="artwork" alt="Album artwork" hidden></div>
+        </div>
         <div class="visualizer" id="visualizer"></div>
         <div class="time-row"><span id="elapsed">0:00</span><input id="seek" type="range" min="0" max="100" value="0"><span id="duration">0:00</span></div>
       </div>
       <div class="controls">
         <button id="previous">|&#9664;</button><button id="play">&#9654;</button><button id="pause">||</button><button id="stop">&#9632;</button><button id="next">&#9654;|</button>
         <label>VOL <input id="volume" type="range" min="0" max="100" value="72"></label>
+        <button id="miniSettings" class="mini-settings" aria-label="Open settings">&#9881;</button>
       </div>
       <div class="option-row">
         <button id="shuffle">SHUFFLE</button><button id="repeat">REPEAT</button><button id="systemAudio">SYSTEM MIX</button><button id="settings" class="gear">&#9881;</button><button id="openFiles" class="add">+ ADD MEDIA</button><input id="fileInput" type="file" accept="audio/*" multiple hidden>
@@ -42,6 +48,8 @@
         <header><span>&#9881; SETTINGS</span><button id="closeSettings" aria-label="Close settings">&times;</button></header>
         <label>Always on top <input id="alwaysOnTop" type="checkbox"></label>
         <label>Visualizer sensitivity <input id="sensitivity" type="range" min="50" max="250" value="100"><output id="sensitivityValue">100%</output></label>
+        <label>Visualizer <select id="visualizerMode"><option value="spectrum">Spectrum</option><option value="segments">Segment bars</option><option value="dots">Dot matrix</option></select></label>
+        <label>Mini mode <input id="miniMode" type="checkbox"></label>
         <label>Design <select id="theme"><option value="luna">Luna Blue</option><option value="olive">Olive Green</option><option value="silver">Silver</option></select></label>
       </div>
     </section>

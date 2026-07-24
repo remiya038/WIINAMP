@@ -96,6 +96,12 @@ internal sealed class PlayerForm : Form
         else if (action.StartsWith("system-media:", StringComparison.Ordinal))
             _ = systemMedia?.ControlAppleMusicAsync(action["system-media:".Length..]);
         else if (action.StartsWith("always-on-top:", StringComparison.Ordinal)) TopMost = action.EndsWith("true", StringComparison.Ordinal);
+        else if (action.StartsWith("mini-mode:", StringComparison.Ordinal))
+        {
+            var mini = action.EndsWith("true", StringComparison.Ordinal);
+            MinimumSize = mini ? new Size(360, 230) : new Size(550, 380);
+            ClientSize = mini ? new Size(410, 230) : new Size(610, 350);
+        }
         else if (action.StartsWith("playlist-collapsed:", StringComparison.Ordinal))
         {
             var collapsed = action.EndsWith("true", StringComparison.Ordinal);
@@ -126,7 +132,7 @@ internal sealed class PlayerForm : Form
         var assets = Path.Combine(Path.GetTempPath(), "WinampXp", "web");
         Directory.CreateDirectory(assets);
         var assembly = Assembly.GetExecutingAssembly();
-        foreach (var file in new[] { "index.html", "style.css", "app.js" })
+        foreach (var file in new[] { "index.html", "style.css", "app.js", "default-artwork.png" })
         {
             var destination = Path.Combine(assets, file);
             using var source = assembly.GetManifestResourceStream($"web.{file}")
