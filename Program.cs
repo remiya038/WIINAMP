@@ -13,7 +13,7 @@ internal static class Program
     [STAThread]
     private static void Main()
     {
-        SetCurrentProcessExplicitAppUserModelID("WIINAMP.Player");
+        SetCurrentProcessExplicitAppUserModelID("WIINAMP");
         ApplicationConfiguration.Initialize();
         Application.Run(new PlayerForm());
     }
@@ -59,6 +59,15 @@ internal sealed class PlayerForm : Form
                 Close();
             }
         };
+    }
+
+    protected override void OnHandleCreated(EventArgs e)
+    {
+        base.OnHandleCreated(e);
+        if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000)) return;
+        const int roundCorners = 2;
+        var preference = roundCorners;
+        _ = DwmSetWindowAttribute(Handle, 33, ref preference, sizeof(int));
     }
 
     private void ApplyRoundedWindowRegion()
@@ -149,6 +158,13 @@ internal sealed class PlayerForm : Form
 
     [DllImport("gdi32.dll")]
     private static extern bool DeleteObject(IntPtr objectHandle);
+
+    [DllImport("dwmapi.dll")]
+    private static extern int DwmSetWindowAttribute(
+        IntPtr windowHandle,
+        int attribute,
+        ref int value,
+        int valueSize);
 
     [DllImport("user32.dll")]
     private static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, IntPtr lParam);
