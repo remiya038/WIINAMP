@@ -26,6 +26,9 @@
     <EmbeddedResource Include="style.css" LogicalName="web.style.css" />
     <EmbeddedResource Include="app.js" LogicalName="web.app.js" />
     <EmbeddedResource Include="default-artwork.png" LogicalName="web.default-artwork.png" />
+    <EmbeddedResource Include="assets\pastel-holo-frame.png" LogicalName="fx.pastel-holo-frame.png" />
+    <EmbeddedResource Include="assets\bubble-chrome-frame.png" LogicalName="fx.bubble-chrome-frame.png" />
+    <EmbeddedResource Include="assets\cloud-circuit-frame.png" LogicalName="fx.cloud-circuit-frame.png" />
   </ItemGroup>
   <Target Name="RemoveUnusedWebView2WpfReference" BeforeTargets="ResolveAssemblyReferences">
     <ItemGroup>

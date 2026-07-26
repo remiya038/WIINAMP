@@ -108,6 +108,32 @@ button{cursor:pointer}
 .app-shell.playlist-hidden .visualizer{height:128px;margin:5px 0}
 
 /* Shared XPapp design tokens: see XPapp/docs/WINDOWS_XP_WINDOW_DESIGN.md. */
+
+/* Candidate themes: each has its own material language, not only a color swap. */
+.app-shell[data-theme="pastel-holo"]{border-color:#8e78d8;background:linear-gradient(135deg,#fdf7ff,#d8f8ff 48%,#f8d8ff)}
+.app-shell[data-theme="pastel-holo"] .app-titlebar{color:#49346f;text-shadow:0 1px #fff;background:linear-gradient(90deg,#ffb9e8,#bdefff 48%,#d6bdff);box-shadow:inset 0 -1px #9678d4}
+.app-shell[data-theme="pastel-holo"] .player,.app-shell[data-theme="pastel-holo"] .controls,.app-shell[data-theme="pastel-holo"] .option-row,.app-shell[data-theme="pastel-holo"] .playlist footer{background:linear-gradient(135deg,#fff9ff,#dff8ff)}
+.app-shell[data-theme="pastel-holo"] .display{border-color:#c58cdc;background:linear-gradient(135deg,#20153d,#122f48);box-shadow:inset 0 0 18px #ecbaff55,0 0 8px #9feaff}
+.app-shell[data-theme="pastel-holo"] .playlist header,.app-shell[data-theme="pastel-holo"] .playlist-head,.app-shell[data-theme="pastel-holo"] .settings-dialog header{color:#4d376c;text-shadow:0 1px #fff;background:linear-gradient(90deg,#ffb6e3,#aeeeff,#d7bdff)}
+.app-shell[data-theme="pastel-holo"] .settings-dialog{border-color:#a77ad7;background:#f9eeff;box-shadow:0 0 25px #b5ebff}
+
+.app-shell[data-theme="bubble-chrome"]{border-color:#6c85c2;background:linear-gradient(145deg,#fdfdff,#bad6f4 47%,#f1c3e7)}
+.app-shell[data-theme="bubble-chrome"] .app-titlebar{color:#314071;text-shadow:0 1px #fff;background:linear-gradient(#fff,#b9d8f4 42%,#f3b9dc 70%,#9bb8df);box-shadow:inset 0 -2px #758cbf}
+.app-shell[data-theme="bubble-chrome"] .player,.app-shell[data-theme="bubble-chrome"] .controls,.app-shell[data-theme="bubble-chrome"] .option-row,.app-shell[data-theme="bubble-chrome"] .playlist footer{background:linear-gradient(135deg,#fff,#d1e8f6 48%,#f2cde6)}
+.app-shell[data-theme="bubble-chrome"] .display{border:2px ridge #effaff;background:radial-gradient(circle at 30% 20%,#324f71,#12182c 62%);box-shadow:inset 0 0 20px #81d8ff55}
+.app-shell[data-theme="bubble-chrome"] .playlist header,.app-shell[data-theme="bubble-chrome"] .playlist-head,.app-shell[data-theme="bubble-chrome"] .settings-dialog header{color:#33406d;text-shadow:0 1px #fff;background:linear-gradient(#fff,#afcff0 45%,#ecaed5 75%,#839bc8)}
+.app-shell[data-theme="bubble-chrome"] .settings-dialog{border-color:#7d91bd;border-radius:14px;background:linear-gradient(135deg,#fff,#d7e9f6,#f4d4e9);box-shadow:0 9px 24px #58709599}
+
+.app-shell[data-theme="cloud-circuit"]{border-color:#55aeaa;background:linear-gradient(135deg,#ecffff,#c5f1e6 52%,#ddf4ff)}
+.app-shell[data-theme="cloud-circuit"] .app-titlebar{color:#185b61;text-shadow:0 1px #fff;background:linear-gradient(90deg,#dffcff,#aee8d7 48%,#c6eeff);box-shadow:inset 0 -2px #55b5ae}
+.app-shell[data-theme="cloud-circuit"] .player,.app-shell[data-theme="cloud-circuit"] .controls,.app-shell[data-theme="cloud-circuit"] .option-row,.app-shell[data-theme="cloud-circuit"] .playlist footer{background:linear-gradient(135deg,#f8ffff,#d9f6ed)}
+.app-shell[data-theme="cloud-circuit"] .display{border-color:#69bdb1;background:linear-gradient(135deg,#113b40,#10282f);box-shadow:inset 0 0 18px #71e7ca44}
+.app-shell[data-theme="cloud-circuit"] .playlist header,.app-shell[data-theme="cloud-circuit"] .playlist-head,.app-shell[data-theme="cloud-circuit"] .settings-dialog header{color:#195d60;text-shadow:0 1px #fff;background:linear-gradient(90deg,#d8fbff,#9ee0cd,#c5edff)}
+.app-shell[data-theme="cloud-circuit"] .settings-dialog{border-color:#58afa8;background:#e7faf4;box-shadow:0 8px 24px #3b9b8b66}
+
+.app-shell[data-theme="pastel-holo"] .window-actions button,
+.app-shell[data-theme="bubble-chrome"] .window-actions button,
+.app-shell[data-theme="cloud-circuit"] .window-actions button{color:#4b4a72;text-shadow:0 1px #fff;border-color:#fff;background:linear-gradient(#fff,#cceafa 50%,#d7c9f4)}
 body{background:#0750ac}
 .app-shell{min-height:0;overflow:hidden;border-radius:7px;box-shadow:0 1px 0 #8db9f8 inset}
 .app-titlebar{height:29px}

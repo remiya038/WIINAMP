@@ -2,6 +2,7 @@ using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using XPappThemes;
 
 namespace WinampXp;
 
@@ -22,9 +23,11 @@ internal static class Program
 internal sealed class PlayerForm : Form
 {
     private readonly WebView2 browser = new() { Dock = DockStyle.Fill };
+    private readonly ThemeEffectsOverlay effects;
     private SystemMediaMonitor? systemMedia;
     public PlayerForm()
     {
+        effects = new ThemeEffectsOverlay(this);
         // Windows uses this title for the taskbar entry and accessibility UI.
         Text = "WIINAMP";
         // The expanded playlist needs enough room for the larger 128px spectrum
@@ -119,7 +122,9 @@ internal sealed class PlayerForm : Form
 
     private void HandleHostAction(string action)
     {
-        if (action == "minimize") WindowState = FormWindowState.Minimized;
+        if (action.StartsWith("theme:", StringComparison.Ordinal))
+            effects.SetTheme(action["theme:".Length..]);
+        else if (action == "minimize") WindowState = FormWindowState.Minimized;
         else if (action == "close") Close();
         else if (action == "drag")
         {

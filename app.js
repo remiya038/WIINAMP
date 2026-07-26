@@ -20,7 +20,7 @@ $('#theme').value=s.theme||'luna';sensitivity=$('#sensitivity').value/100;
 visualizerMode=s.visualizerMode||'spectrum';$('#visualizerMode').value=visualizerMode;$('#visualizer').dataset.mode=visualizerMode;
 setToggle($('#miniModeToggle'),!!s.mini);applyMiniMode(!!s.mini);
 $('#sensitivityValue').textContent=`${$('#sensitivity').value}%`;
-$('.app-shell').dataset.theme=$('#theme').value;post(`always-on-top:${toggleValue($('#alwaysOnTopToggle'))}`)}
+$('.app-shell').dataset.theme=$('#theme').value;post(`theme:${$('#theme').value}`);post(`always-on-top:${toggleValue($('#alwaysOnTopToggle'))}`)}
 $('#openFiles').onclick=()=>$('#fileInput').click();
 $('#fileInput').onchange=e=>addFiles(e.target.files);
 $('#play').onclick=()=>{if(current<0&&tracks.length)load(0);
@@ -47,7 +47,7 @@ $('#togglePlaylist').textContent=c?'+':'−';post(`playlist-collapsed:${c}`)};
 $('#alwaysOnTopToggle').onclick=e=>{const active=!toggleValue(e.currentTarget);setToggle(e.currentTarget,active);save();post(`always-on-top:${active}`)};
 $('#sensitivity').oninput=()=>{sensitivity=$('#sensitivity').value/100;
 $('#sensitivityValue').textContent=`${$('#sensitivity').value}%`;save()};
-$('#theme').onchange=()=>{$('.app-shell').dataset.theme=$('#theme').value;save()};
+$('#theme').onchange=()=>{$('.app-shell').dataset.theme=$('#theme').value;save();post(`theme:${$('#theme').value}`)};
 $('#visualizerMode').onchange=e=>{visualizerMode=e.target.value;$('#visualizer').dataset.mode=visualizerMode;save()};
 $('#miniModeToggle').onclick=e=>{const active=!toggleValue(e.currentTarget);setToggle(e.currentTarget,active);applyMiniMode(active);save()};
 
